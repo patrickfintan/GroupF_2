@@ -1,0 +1,170 @@
+
+
+h1 {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #007bff;
+}
+
+div {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+select, input[type="text"], textarea {
+  width: 100%;
+  max-width: 600px;
+  margin: auto;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+input[type="text"] {
+  display: block;
+  text-align: center;
+}
+
+textarea {
+  height: 150px;
+  resize: none;
+}
+
+textarea#summary, textarea#story {
+  width: 100%;
+  max-width: none; /* Spans entire screen width */
+  height: 200px; /* Increase for better visibility */
+}
+
+
+
+.button-container {
+  display: flex;
+  flex-direction: row; /* Stacks buttons vertically */
+  justify-content: space-between; /* Equal spacing between buttons */
+  align-items: center; /* Align buttons vertically */
+  width: 100%; /* Ensure it spans the container */
+  max-width: 600px; /* Optional: Set a max-width */
+  margin: 20px auto; /* Center the button group container */
+  padding: 10px 0;
+}
+
+.button-container button {
+  flex: 1; /* Ensures buttons take equal space */
+  width: 50%;
+  max-width: 200px; /* Optional: Limit the maximum width of the button */
+  padding: 10px 20px;
+  margin: 0 10px;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center; /* Aligns the text inside the button */
+  display: block; /* Ensure the buttons take up their own line */
+}
+
+
+
+button[type="button"] {
+  background-color: #007bff;
+}
+
+button[type="button"]:hover {
+  background-color: #0056b3;
+}
+
+button[type="file"] {
+  display: none;
+}
+
+button.save {
+  background-color: #28a745;
+}
+
+button.save:hover {
+  background-color: #218838;
+}
+
+button.publish {
+  background-color: #17a2b8;
+}
+
+button.publish:hover {
+  background-color: #138496;
+}
+
+button.download {
+  background-color: #ffc107;
+}
+
+button.download:hover {
+  background-color: #e0a800;
+}
+
+#coverImageUpload {
+  display: none;
+}
+
+p {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+p.upload-info {
+  font-style: italic;
+}
+
+
+/*Snapshot Section*/
+.snapshot-section {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.snapshot-section h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.snapshot-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.snapshot-section ul li {
+  margin-bottom: 10px;
+}
+
+.snapshot-section ul li p {
+  font-weight: bold;
+}
+
+.snapshot-section ul li ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.snapshot-section input {
+  margin-right: 10px;
+  padding: 5px;
+  font-size: 14px;
+}
+
+.snapshot-section button {
+  margin-top: 5px;
+  padding: 5px 10px;
+  font-size: 14px;
+}

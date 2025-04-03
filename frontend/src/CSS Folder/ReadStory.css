@@ -1,0 +1,200 @@
+.print-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    border: 2px solid black; /* Adds a black border */
+    border-radius: 30px; /* Optional: Rounded corners for aesthetic appeal */
+}
+
+  .print-header {
+    background-color: #7198c0; /* Light background */
+    padding: 20px;
+    border: 1px solid #ddd; /* Border around the header */
+    text-align: center;
+  }
+
+  .print-header h1 {
+    font-size: 2rem; /* Main header size */
+    margin: 0;
+    color: #d81010;
+  }
+
+  .print-header h2 {
+    font-size: 1.5rem; /* Subheader size */
+    margin: 20px 0 0 0; /* Add gap only above the subheader */
+    color: #9f3939; /* Slightly lighter color for subheader */
+  }
+
+  .print-header h3 {
+    font-size: 1.25rem; /* Third header size */
+    margin: 20px 0 0 0; /* Add gap above the third header */
+    color: #4e2b2b; /* Slightly lighter color for third header */
+  }
+
+  .print-content {
+    max-height: 100px;
+    font-size: 1rem; /* Set a base font size for content */
+    line-height: 1.6; /* Improve readability with proper line spacing */
+    color: #333; /* Dark text color for good contrast */
+    margin-top: 20px; /* Space between the header and content */
+    text-align: justify; /* Optional: Align text for a polished layout */
+    overflow-y: auto; /* Enable vertical scrolling when content overflows */
+  }
+
+  .print-content p {
+    margin-bottom: 15px; /* Space between paragraphs */
+  }
+
+
+  .image-container {
+    text-align: center; /* Center the image */
+    margin-bottom: 20px; /* Add space between the image and the headers */
+  }
+
+  .header-image {
+    max-width: 300px; /* Set maximum width */
+    max-height: 300px; /* Set maximum height */
+    width: 100%; /* Scale width to fit the container */
+    height: 100%; /* Scale height to fit the container */
+    object-fit: contain; /* Ensure the aspect ratio is maintained */
+    border-radius: 10px; /* Optional: Rounded corners */
+    border: 1px solid #ddd; /* Add a light border */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add subtle shadow */
+  }
+
+  @media print {
+    .print-container {
+      padding: 0;
+      color: black;
+    }
+  
+    .print-header {
+      border: none; /* Remove borders for printing */
+      background-color: white; /* Ensure background is plain */
+    }
+  }
+
+
+  .rate-story-container {
+    display: flex; /* Align form and button horizontally */
+    justify-content: space-between; /* Space between form and button */
+    align-items: flex-start; /* Align items to the top */
+    margin-top: 30px; /* Space from the section above */
+    padding: 20px; /* Padding around the container */
+    border: 1px solid #ddd; /* Light border for clarity */
+    border-radius: 10px; /* Rounded corners */
+    background-color: #f8f9fa; /* Light gray background */
+  }
+
+  .rate-story-form {
+    width: 70%; /* Form takes 70% of the container width */
+  }
+
+  .rate-story-form h2 {
+    margin-bottom: 20px; /* Space below the heading */
+    font-size: 1.5rem;
+    color: #333;
+  }
+
+  .form-group {
+    margin-bottom: 15px; /* Space between form elements */
+  }
+
+  .form-group label {
+    display: block; /* Labels on separate lines */
+    margin-bottom: 5px;
+    font-size: 1rem;
+    color: #333;
+  }
+
+  .form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%; /* Full width input fields */
+  padding: 10px; /* Space inside input fields */
+  border: 1px solid #ccc; /* Border for input fields */
+  border-radius: 5px; /* Rounded corners */
+  font-size: 1rem;
+}
+
+.send-button {
+  padding: 10px 20px;
+  background-color: #007bff; /* Button background color */
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.send-button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.button-container {
+  display: flex;
+  align-items: center; /* Center the button vertically */
+  justify-content: center;
+  margin-top: 20px; /* Space above the button */
+}
+
+.download-button {
+  padding: 10px 20px;
+  background-color: #28a745; /* Green button background */
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+
+.download-button:hover {
+  background-color: #218838; /* Darker green on hover */
+}
+
+.movie-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.movie-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.movie-details {
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.movie-item img {
+  width: 100px;
+  height: auto;
+  border-radius: 5px;
+}
+
+.edit-button {
+  background-color: #007BFF;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.edit-button:hover {
+  background-color: #0056b3;
+}
+
+.footer {
+  margin-top: 20px;
+  text-align: center;
+  padding: 10px;
+  background-color: #2e2828;
+}
