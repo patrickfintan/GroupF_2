@@ -225,7 +225,7 @@ const storyContent = new mongoose.Schema({
 const storyEditsSchema = new mongoose.Schema({
     storyId: { type: String, required: true }, // Shared storyId
     userId: String, // User who made the edit
-    editedStory: String, // Edited version of the story
+    changes: Object, // Edited version of the story
     editedAt: { type: Date, default: Date.now }, // Timestamp of the edit
 });
 
@@ -286,6 +286,68 @@ app.post("/api/save-story", upload.single("coverImage"), async(req,res) => {
     console.error("Error saving story:", error);
     res.status(500).json({ error: "Error saving story" });
    }
+});
+
+//Updating the story
+app.post('/api/update-story/:storyId',upload.single("coverImage"), async (req, res) => {
+    const { storyId }  = req.params;
+    const {storyType, title, coverImage,summary, story, userId, snapshots} = req.body;
+    const isPublished = req.body.isPublished === "true";
+    const parsedSnapshots = JSON.parse(snapshots); // Parse the JSON string
+    console.log("The details", storyType, title, storyId, isPublished);
+    const existingDetails = await Details.findOne({ storyId });
+    const existingContent = await Content.findOne({ storyId });
+
+    try{
+        const updatedDetails = await Details.findOneAndUpdate(
+            { storyId },
+            {
+                storyType,
+                title,
+                coverImage,
+                summary,
+                parsedSnapshots,
+                isPublished
+            },
+            { new: true, upsert: true } // If no story is found, create a new one
+        );
+    
+        const updatedContent = await Content.findOneAndUpdate(
+            { storyId },
+            { story },
+            { new: true, upsert: true } // Update or create if not exists
+        );
+
+        const changes = {};
+        if(existingDetails){
+            if (existingDetails.storyType !== storyType) changes.storyType = storyType;
+            if (existingDetails.title !== title) changes.title = title;
+            if (existingDetails.summary !== summary) changes.summary = summary;
+            if (existingDetails.coverImage !== coverImage) changes.coverImage = coverImage;
+            if (existingDetails.isPublished !== isPublished) changes.isPublished = isPublished;
+        }
+        if (existingContent) {
+            if (existingContent.story !== story) changes.story = story;
+        }
+        console.log(changes);
+        const editLog = new StoryEdits({
+            storyId,
+            userId, // Record the user who made the edit
+            changes, // Save all changed fields
+            editedAt: new Date() // Automatically log the timestamp
+        });
+
+        await editLog.save();
+
+        res.status(200).json({
+            message: 'Story updated successfully!',
+            updatedDetails,
+            updatedContent
+        });
+    }catch(error){
+        console.error('Error updating story:', error);
+        res.status(500).json({error: 'Internal Server Error' });
+    }
 });
 
 
@@ -403,8 +465,8 @@ app.post("/api/update-story-rating", async (req,res) => {
 });
 
 
-app.get('/stories', (req,res) =>{
-    publishedStories =globalMoviesCache.filter((story) => story.isPublished === true);
+app.get('/stories',  async (req,res) =>{
+    publishedStories =await Details.find({ isPublished: true});
     console.log("Starting the print");
     console.log(publishedStories);
     res.json(publishedStories);
@@ -412,6 +474,8 @@ app.get('/stories', (req,res) =>{
 
 app.get("/api/get-story/:storyId", (req, res) => {
     const { storyId } = req.params; // Extract storyId from the URL
+
+    console.log(storyId)
     const story = globalMoviesCache.find((s) => s.storyId === storyId); // Find the story with matching storyId
 
     console.log(story);

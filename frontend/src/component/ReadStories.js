@@ -28,7 +28,10 @@ function ReadStories(){
     
     useEffect(() => {
         fetch('http://localhost:5000/stories')
-        .then((response) => response.json())
+        .then((response) => {
+            if(!response.ok) throw new Error('Network responsewas not okay');
+            return response.json();
+        })
         .then((data) => setStories(data));
     }, []);
 
@@ -36,7 +39,7 @@ function ReadStories(){
 
     const filteredMovies = stories.filter((story) => {
         const matchesCategory = selectedCategory === '' || story.category === selectedCategory;
-        const matchRatings = selectedRating==='' || (story.Rating === selectedRating);
+        const matchRatings = selectedRating==='' || (story.rating === parseInt(selectedRating,10));
     
     return matchRatings && matchesCategory;
     });
@@ -45,8 +48,9 @@ function ReadStories(){
         navigate("/ReadStory", { state: story});
     }
 
-    const handleEditClick = (story) => {
-        navigate(`/WriteStory/${story.storyId}`);
+    const handleEditClick = (storysent) => {
+        console.log(storysent);
+        navigate("/WriteStory",{ state: storysent});
     }
 
     console.log(filteredMovies)
@@ -82,17 +86,21 @@ function ReadStories(){
         </div><ul className="movie-list">
                 {filteredMovies.map((story, index) => (
                     <li key={index} className="movie-item">
-                        <img src={`http://localhost:5000/${story.coverImage}`} alt={story.title} />
+                        {story.coverImage ? (
+                            <img src={`http://localhost:5000/${story.coverImage}`} alt={story.title} />
+                        ): (
+                            <div className="placeholder-image"></div> // Add a placeholder div when the image is missing
+                        )}
                         <div className="movie-details">
                             {story.userId === userId &&(
                                 <button className = "edit-button" onClick={() => handleEditClick(story)}> Edit</button>
                             )}
 
-                            <span onClick={() => handleTitleClick(story)} style={{cursor: "pointer", color:"blue"}}>
+                            <span className="title" onClick={() => handleTitleClick(story)} style={{cursor: "pointer", color:"blue"}}>
                                 <strong>Title:</strong> {story.title}
                             </span>
-                            <span>Rating: {story.rating}</span>
-                            <span>
+                            <span className="rating">Rating: {story.rating}</span>
+                            <span className="category">
                                 <strong>category:</strong> {story.category}
                             </span>
                         </div>

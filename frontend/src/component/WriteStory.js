@@ -1,5 +1,5 @@
-import React, { use, useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState, useContext } from "react";
+import { useLocation} from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../context.js";
 import '../CSS Folder/WriteStory.css';
@@ -12,24 +12,27 @@ function WriteStory() {
     const [summary, setSummary] = useState("");
     const [story, setStory] = useState("");
     const [coverImage, setCoverImage] = useState(null);
-    const {storyId} = useParams(); // Added for story ID
     const [snapshots, setSnapshots] = useState([]);
     const [newSnapshotText, setNewSnapshotText] = useState("");
     const [newLinks, setNewLinks] = useState("");
-    console.log(storyId);
+    const location = useLocation();
+    const storysent =location.state || {}; // Added for story ID
+
+    console.log(storysent);
     useEffect(() => {
-        if (storyId) {
+        if (storysent.storyId) {
+            console.log("Inside if");
             const fetchStory = async () => {
                 try {
-                    const response = await axios.get(`/api/get-story/${storyId}`);
+                    const response = await axios.get(`http://localhost:5000/api/story/${storysent.storyId}`);
                     console.log("Starting the edit part:", response);
-                    const { storyType, title, summary, story, coverImage } = response.data; // Include coverImage
-                    setStoryType(storyType);
-                    setTitle(title);
-                    setSummary(summary);
-                    setStory(story);
-                    setCoverImage(coverImage); // Set the coverImage state
-                    setSnapshots(snapshots || []); // Set snapshots state
+                    console.log(response);
+                    setStoryType(storysent.storyType);
+                    setTitle(storysent.title);
+                    setSummary(storysent.summary);
+                    setStory(response.data.story);
+                    setCoverImage(storysent.coverImage); // Set the coverImage state
+                    setSnapshots(storysent.snapshots || []); // Set snapshots state
                 } catch (error) {
                     console.error("Error fetching story:", error);
                 }
@@ -37,6 +40,7 @@ function WriteStory() {
             fetchStory();
         } else {
             // No storyId; assume the user is creating a new story
+            console.log("In else");
             setStoryType("");
             setTitle("");
             setSummary("");
@@ -44,7 +48,7 @@ function WriteStory() {
             setCoverImage(null); // Reset the coverImage state
             setSnapshots([]); // Reset snapshots state
         }   
-    }, [storyId]);
+    }, [storysent]);
 
 
     const handleImageUpload = (event) =>{
@@ -67,13 +71,12 @@ function WriteStory() {
             formData.append("summary",summary);
             formData.append("story", story);
             formData.append("coverImage",coverImage);
-            formData.append("isPublished", isPublished);
-            formData.append("userId", userId);
+            formData.append("isPublished", isPublished ? "true" : "false");            formData.append("userId", userId);
             formData.append("snapshots", JSON.stringify(snapshots)); // Include snapshots
-
-            if(storyId){
-                console.log(storyId);
-                await axios.put('/api/update-story/${storyId}',formData);
+            console.log(formData);
+            if(storysent){
+                console.log(storysent);
+                await axios.post(`http://localhost:5000/api/update-story/${storysent.storyId}`,formData);
                 alert(isPublished ? "Story published successfully!" : "Story updated successfully!");            
             } else{
                 console.log(formData);
@@ -116,7 +119,7 @@ function WriteStory() {
 
     return (
         <><div>
-            <h1>{storyId ? "Edit Your Story" : "Create Your Story"}</h1>
+            <h1>{storysent ? "Edit Your Story" : "Create Your Story"}</h1>
             <div>
                 <label>Type of Story</label>
                 <select value={storyType} onChange={(e) => setStoryType(e.target.value)}>
@@ -174,7 +177,7 @@ function WriteStory() {
                     </div>
             </div>
             <div className="button-container">
-                <button className="save" onClick={() => handleSaveOrPublish(0)}>{storyId ? "Update" : "save"}</button>
+                <button className="save" onClick={() => handleSaveOrPublish(0)}>{storysent ? "Update" : "save"}</button>
                 <button className="publish" onClick={() => handleSaveOrPublish(1)}>Publish</button>
             </div>
             {/* {grammarCheckResult && <div>Grammar Check Result: {grammarChcekResult}</div>} */}
