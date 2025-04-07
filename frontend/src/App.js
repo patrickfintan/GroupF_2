@@ -38,7 +38,7 @@ const movies = [{
         <Route path = "/HomePage" element={<HomePage/>} />
         <Route path="/ReadStory" element={<ReadStory/>} />
         <Route path="/ReadStories" element={<ReadStories/>} />
-        <Route path="/MyStories" element={<MyStories movies={movies} />} />
+        <Route path="/MyStories" element={<MyStories />} />
         <Route path="/FeedBack" element = {<FeedBack/>}/>
         <Route path="/Contact" element = {<Contact/>}/>
       </Routes>

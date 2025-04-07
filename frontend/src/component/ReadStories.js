@@ -27,7 +27,7 @@ function ReadStories(){
 
     
     useEffect(() => {
-        fetch('http://localhost:5000/stories')
+        fetch('http://localhost:5000/stories?origin=ReadStories')
         .then((response) => {
             if(!response.ok) throw new Error('Network responsewas not okay');
             return response.json();

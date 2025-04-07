@@ -1,13 +1,26 @@
 import "../CSS Folder/main.css";
-import "../CSS Folder/ReadStories.css";
-import React, { useState } from 'react';
+import "../CSS Folder/MyStories.css";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 
-function MyStories({movies}){
+function MyStories(){
 
-    console.log(movies);
     const [selectedCategory, setSelectedCategory] = useState('');
     const [enteredText, setenteredText] = useState('');
+    const [stories, setStories] = useState([]);
+    const navigate = useNavigate();
+    
+
+    useEffect(() => {
+            fetch('http://localhost:5000/stories?origin=MyStories')
+            .then((response) => {
+                if(!response.ok) throw new Error('Network responsewas not okay');
+                return response.json();
+            })
+            .then((data) => setStories(data));
+
+        }, []);
 
     const handleCategoryChange = (event) => {
         setSelectedCategory(event.target.value);
@@ -22,11 +35,16 @@ function MyStories({movies}){
         setenteredText('');
     };
 
+    const handleEdit = (storysent) => {
+        console.log("Entering the editing part");
+        navigate("/WriteStory",{ state: storysent});
+    };
+
     
 
-    const filteredMovies = movies.filter((movie) => {
-        const matchesCategory = selectedCategory === '' || movie.category === selectedCategory;
-        const matchTitle = enteredText ==='' || (movie.title.includes(enteredText));
+    const filteredMovies = stories.filter((story) => {
+        const matchesCategory = selectedCategory === '' || story.category === selectedCategory;
+        const matchTitle = enteredText ==='' || (story.title.includes(enteredText));
     
     return matchTitle && matchesCategory;
     });
@@ -61,20 +79,31 @@ function MyStories({movies}){
                 clearFilters
             </button>
         </div><ul className="movie-list">
-                {filteredMovies.map((movie, index) => (
+                {filteredMovies.map((story, index) => (
                     <li key={index} className="movie-item">
-                        <img src={movie.image} alt={movie.title} />
-                        <div className="movie-details">
+                        {(story.coverImage || story.coverImage == null)? (
+                            <img src={`http://localhost:5000/${story.coverImage}`} alt={story.title} />
+                        ): (
+                            <div className="placeholder-image"></div> 
+                        )}                        
+                            <div className="movie-details">
                             <span>
-                                <strong>Title:</strong> {movie.title}
-                            </span>
-                            <span className={movie.Rating}>Rating</span>
-                            <span>
-                                <strong>category:</strong> {movie.category}
+                                <strong className="title">Title:</strong> {story.title}
                             </span>
                             <span>
-                                <strong>Autohr:</strong> {movie.author.name} ({movie.author.email})
+                                <strong className="rating">Rating:</strong> {story.rating}
+                            </span> 
+                            <span>
+                                <strong className="category">Category:</strong> {story.category}
                             </span>
+
+                            <div className = "story-buttons">
+                                <button className="edit-button" onClick = {() => handleEdit(story)} >Edit</button>
+                                <button className={story.isPublished ? "unpublish-button" : "publish-button"} onClick={() => handlePublishToggle(story.id, story.isPublished)}>
+                                    {story.isPublished ? "Unpublish" : "Publish"}
+                                </button>
+                                <button className="delete-button" onClick={() => handleDelete(story.id)}>Delete</button>
+                            </div>
                         </div>
                     </li>
                 ))}

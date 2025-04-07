@@ -19,7 +19,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve u
 
 
 let globalMoviesCache = []; // This will hold the movies data 
-
+let globalUserId; // Define a global variable
 mongoose
 .connect("mongodb://localhost:27017/registration",{useNewUrlParser: true, useUnifiedTopology: true})
 .then(() => console.log("Connected to MongoDB"))
@@ -74,6 +74,8 @@ app.post("/SignIn", async (req, res) => {
         if (!isPasswordMatch){
             return res.status(401).json({ message: "Invalid username or password"});
         }
+
+        globalUserId = user._id; // Save userId to global variable
 
         res.json({userId: user._id})
     }catch(error){
@@ -292,7 +294,7 @@ app.post("/api/save-story", upload.single("coverImage"), async(req,res) => {
 app.post('/api/update-story/:storyId',upload.single("coverImage"), async (req, res) => {
     const { storyId }  = req.params;
     const {storyType, title, coverImage,summary, story, userId, snapshots} = req.body;
-    const isPublished = req.body.isPublished === "true";
+    const isPublished = req.body.isPublished === 'true';
     const parsedSnapshots = JSON.parse(snapshots); // Parse the JSON string
     console.log("The details", storyType, title, storyId, isPublished);
     const existingDetails = await Details.findOne({ storyId });
@@ -466,10 +468,19 @@ app.post("/api/update-story-rating", async (req,res) => {
 
 
 app.get('/stories',  async (req,res) =>{
-    publishedStories =await Details.find({ isPublished: true});
+    const componentOrigin = req.query.origin;
+    console.log(componentOrigin);
+    let response;
+
+    if (componentOrigin === 'ReadStories'){
+        response =await Details.find({ isPublished: true});
+    } else if(componentOrigin === 'MyStories')
+    {
+        response = await Details.find({userId : globalUserId});
+    }
     console.log("Starting the print");
-    console.log(publishedStories);
-    res.json(publishedStories);
+    console.log(response);
+    res.json(response);
 });
 
 app.get("/api/get-story/:storyId", (req, res) => {

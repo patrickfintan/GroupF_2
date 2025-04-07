@@ -17,47 +17,56 @@ function WriteStory() {
     const [newLinks, setNewLinks] = useState("");
     const location = useLocation();
     const storysent =location.state || {}; // Added for story ID
+    const [isPublished, setIsPublished] = useState(false); // Track published state
+    const [showPublishButton, setShowPublishButton] = useState(false); // Control visibility of the Publish button
 
     console.log(storysent);
     useEffect(() => {
-        if (storysent.storyId) {
-            console.log("Inside if");
-            const fetchStory = async () => {
+        const initializeComponent = async () => {
+            if (storysent && storysent.storyId) {
+                console.log("Editing existing story:", storysent.storyId);
+                setShowPublishButton(true);
                 try {
-                    const response = await axios.get(`http://localhost:5000/api/story/${storysent.storyId}`);
-                    console.log("Starting the edit part:", response);
-                    console.log(response);
-                    setStoryType(storysent.storyType);
-                    setTitle(storysent.title);
-                    setSummary(storysent.summary);
-                    setStory(response.data.story);
-                    setCoverImage(storysent.coverImage); // Set the coverImage state
-                    setSnapshots(storysent.snapshots || []); // Set snapshots state
+                    const response = await axios.get(
+                        `http://localhost:5000/api/story/${storysent.storyId}`
+                    );
+                    const data = response.data;
+                    setStoryType(data.storyType);
+                    setTitle(data.title);
+                    setSummary(data.summary);
+                    setStory(data.story);
+                    setCoverImage(data.coverImage);
+                    setSnapshots(data.snapshots || []);
+                    setIsPublished(data.isPublished || false);
                 } catch (error) {
                     console.error("Error fetching story:", error);
                 }
-            };
-            fetchStory();
-        } else {
-            // No storyId; assume the user is creating a new story
-            console.log("In else");
-            setStoryType("");
-            setTitle("");
-            setSummary("");
-            setStory("");
-            setCoverImage(null); // Reset the coverImage state
-            setSnapshots([]); // Reset snapshots state
-        }   
-    }, [storysent]);
-
+            } else {
+                console.log("No story ID found, initializing as a new story.");
+                clearState(); // Reset state explicitly
+            }
+        };
+    
+        initializeComponent();
+    }, [location.key]);
 
     const handleImageUpload = (event) =>{
         setCoverImage(event.target.files[0]);
     };
 
+    const clearState = () => {
+        setStoryType("");
+        setTitle("");
+        setSummary("");
+        setStory("");
+        setCoverImage(null);
+        setSnapshots([]);
+        setIsPublished(false);
+        setShowPublishButton(false);
+    }; 
   
 
-    const handleSaveOrPublish = async(isPublished) => {
+    const handleSaveOrPublish = async(publish) => {
         try{
 
             if (!storyType || !title || !summary || !story) {
@@ -66,12 +75,14 @@ function WriteStory() {
             } 
             
             const formData = new FormData();
+            console.log("Front-end isPublished:", publish); // Log the value before appending
             formData.append("storyType", storyType);
             formData.append("title", title);
             formData.append("summary",summary);
             formData.append("story", story);
             formData.append("coverImage",coverImage);
-            formData.append("isPublished", isPublished ? "true" : "false");            formData.append("userId", userId);
+            formData.append("isPublished", publish);            
+            formData.append("userId", userId);
             formData.append("snapshots", JSON.stringify(snapshots)); // Include snapshots
             console.log(formData);
             if(storysent){
@@ -82,7 +93,8 @@ function WriteStory() {
                 console.log(formData);
                 const response = await axios.post("http://localhost:5000/api/save-story",formData);
                 alert(isPublished ? "Story published successfully!" : "Story updated successfully!");            }
-                window.location.reload(); 
+                
+                clearState(); // Clear the state after saving
             }
         catch (error){
             console.error("Error saving story:", error);
@@ -119,7 +131,7 @@ function WriteStory() {
 
     return (
         <><div>
-            <h1>{storysent ? "Edit Your Story" : "Create Your Story"}</h1>
+            <h1>{storysent.storyId ? "Edit Your Story" : "Create Your Story"}</h1>
             <div>
                 <label>Type of Story</label>
                 <select value={storyType} onChange={(e) => setStoryType(e.target.value)}>
@@ -132,19 +144,22 @@ function WriteStory() {
                 <label>Title for Story</label>
                 <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
             </div>
-            <div>
-                <button
-                    type="button"
-                    onClick={() => document.getElementById('coverImageUpload').click()}>
-                    Upload Cover Image
-                </button>
-                <input
-                    type="file"
-                    id="coverImageUpload"
-                    style={{ display: 'none' }}
-                    onChange={handleImageUpload} />
-                {coverImage && <p>Image Uploaded: {coverImage.name}</p>}
-            </div>
+            {!storysent.storyId && (
+                <div>
+                    <button
+                        type="button"
+                        onClick={() => document.getElementById('coverImageUpload').click()}>
+                        Upload Cover Image
+                    </button>
+                    <input
+                        type="file"
+                        id="coverImageUpload"
+                        style={{ display: 'none' }}
+                        onChange={handleImageUpload}
+                    />
+                    {coverImage && <p>Image Uploaded: {coverImage.name}</p>}
+                </div>
+            )}
             <div>
                 <label>Summary</label>
                 <textarea id="summary" value={summary} onChange={(e) => setSummary(e.target.value)} />
@@ -177,10 +192,21 @@ function WriteStory() {
                     </div>
             </div>
             <div className="button-container">
-                <button className="save" onClick={() => handleSaveOrPublish(0)}>{storysent ? "Update" : "save"}</button>
-                <button className="publish" onClick={() => handleSaveOrPublish(1)}>Publish</button>
+            {storysent.storyId ? (
+                    <>
+                        {!isPublished ? (
+                            <button className="save" onClick={() => handleSaveOrPublish(false)}>Update Unpublished Story</button>
+                        ) : (
+                            <button className="save" onClick={() => handleSaveOrPublish(true)}>Update Publish Story</button>
+                        )}
+                    </>
+                ) : (
+                    <>
+                        <button className="save" onClick={() => handleSaveOrPublish(false)}>Save</button>
+                        <button className="publish" onClick={() => handleSaveOrPublish(true)}>Publish</button>
+                    </>
+                )}
             </div>
-            {/* {grammarCheckResult && <div>Grammar Check Result: {grammarChcekResult}</div>} */}
         </div>
         </>
     );
