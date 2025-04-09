@@ -1,5 +1,7 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigation, useNavigate } from 'react-router-dom';
 import Navbar from './component/Navbar';
+import React, { useEffect,useContext } from "react";
+
 import WriteStory from './component/WriteStory';
 import ReadStories from './component/ReadStories';
 import FeedBack from './component/FeedBack';
@@ -11,16 +13,11 @@ import SignIn from './component/SignIn';
 import { UserProvider } from "./context";
 import Registration from './component/Registration';
 import ForgotPassword from './component/ForgotPassword';
+import { UserContext } from "../src/context.js";
 
 function App() {
 
-const movies = [{
-  title: "Movie Title 3",
-  category: "Action",
-  summary: "First Story",
-  image: "https://via.placeholder.com/80x120",
-  Rating: "1"
-}]
+
 
  
   
@@ -50,13 +47,26 @@ const movies = [{
 
 function ConditionalNavbar() {
   const location = useLocation(); // Get the current path
+  const navigate = useNavigate();
+  const { setFromComponent } = useContext(UserContext);
 
-  // Don't show Navbar for the Registration page("/") and SignIn Page("/SignIn")
-  if (location.pathname === "/" || location.pathname === "/signIn" || location.pathname === "/Registration" || location.pathname === "/ForgotPassword") {
-      return null;
-  }
-  console.log("Hi");
-  return <Navbar />;
+  const routeToComponentMap = {
+    "/HomePage": "HomePage",
+    "/MyStories": "MyStories",
+    "/ReadStories": "ReadStories",
+    "/WriteStory" : "WriteStory",
+};
+
+const handleNavigation = (path) => {
+  const componentName = routeToComponentMap[location.pathname] || "Unknown"; // Get the originating component dynamically
+  setFromComponent(componentName); // Set the originating component dynamically
+  navigate(path); // Navigate to the target path
+};
+
+if (location.pathname === "/" || location.pathname === "/signIn" || location.pathname === "/Registration" || location.pathname === "/ForgotPassword") {
+  return null;
+}
+return <Navbar onNavigate={handleNavigation}/>;
 }
 
 

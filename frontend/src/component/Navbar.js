@@ -1,7 +1,14 @@
 import { Link } from 'react-router-dom';
 import '../CSS Folder/navbar.css';
 import { useState } from 'react'; // To handle toggler state
-function Navbar() {
+function Navbar({ onNavigate }) {
+
+  const handleNavigation = (path, componentName) => {
+    if (onNavigate) {
+      onNavigate(path, componentName); // Call the navigation handler passed as a prop
+    }
+  };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
@@ -26,20 +33,18 @@ function Navbar() {
         <div className="collapse navbar-collapse" id="navbarNav">
         <ul className="navbar-nav">
             <li className='nav-item'>
-            <a className="nav-link" href="/HomePage">Home Page</a>
+            <button className="nav-link btn btn-link"   onClick={() => handleNavigation("/HomePage", "Navbar")}>Home Page</button>           
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="/WriteStory">Write Story</a>
+            <button className="nav-link btn btn-link"   onClick={() => handleNavigation("/WriteStory", "Navbar")}>Write Story</button>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="/ReadStories">Read Stories</a>
+            <button className="nav-link btn btn-link"   onClick={() => handleNavigation("/ReadStories", "Navbar")}>Read Story</button>
             </li>
             <li className='nav-item'>
-              <a className='nav-link' href='/MyStories'>My Stories</a>
+            <button className="nav-link btn btn-link"   onClick={() => handleNavigation("/MyStories", "Navbar")}>My Story</button>
             </li>
-            <li className="nav-item">
-              <a className="nav-link" href="/FeedBack">Feed Back</a>
-            </li>
+            
           </ul>
         </div>
       </div>

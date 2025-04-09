@@ -19,6 +19,7 @@ function ReadStory(){
         const fetchStoryData = async () =>{
             try {
                 const response = await axios.get(`http://localhost:5000/api/story/${movie.storyId}`);
+                console.log(response.data);
                 setStoryData(response.data);
             } catch (error){
                 console.error("Enter fetching story data:", error);

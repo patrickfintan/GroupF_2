@@ -173,7 +173,7 @@ app.get("/api/movies",async(req,res) =>{
     try{
         if(globalMoviesCache.length === 0 ){
             console.log("Fetching Movie Details from Data Base");
-            const movies = await StoryDetails.find();
+            const movies = await Details.find({ isPublished: true });
             globalMoviesCache = movies;
         } else{
             console.log("Using cached movies data...");
@@ -182,11 +182,11 @@ app.get("/api/movies",async(req,res) =>{
         const categories = {};
 
         globalMoviesCache.forEach((movie) => {
-            if(!categories[movie.category]) {
-                categories[movie.category] = [];
+            if(!categories[movie.storyType]) {
+                categories[movie.storyType] = [];
             }
 
-            categories[movie.category].push(movie);
+            categories[movie.storyType].push(movie);
         });
 
         const topMovies = Object.entries(categories).map(([category, movies]) => ({
@@ -217,6 +217,7 @@ const storyDetails = new mongoose.Schema({
         }
     ],
     rating: { type: Number, default: 0 } ,
+    editing: {type: Boolean, default: false},
     });
 
 const storyContent = new mongoose.Schema({
@@ -252,7 +253,6 @@ app.post("/api/save-story", upload.single("coverImage"), async(req,res) => {
     const {storyType, title, summary, story, userId, isPublished, snapshots} = req.body;
     const storyId = new mongoose.Types.ObjectId();
     const coverImage = req.file ? `uploads/${req.file.filename}` : null;
-
     const newStoryDetails = new Details({
         storyId,
         userId,
@@ -280,7 +280,8 @@ app.post("/api/save-story", upload.single("coverImage"), async(req,res) => {
         title,
         summary,
         coverImage,
-        isPublished
+        isPublished,
+        editing : false,
       });
     
     res.status(201).json({ message: "Story saved successfully!",storyId });
@@ -309,11 +310,17 @@ app.post('/api/update-story/:storyId',upload.single("coverImage"), async (req, r
                 coverImage,
                 summary,
                 parsedSnapshots,
-                isPublished
+                isPublished,
+                editing: false,
             },
             { new: true, upsert: true } // If no story is found, create a new one
         );
-    
+        
+        console.log("Saving to globalMoviesCache");
+        globalMoviesCache = globalMoviesCache.map((story) => 
+        story.storyId === storyId ? {...story, ...updatedDetails._doc} : story)
+        
+        console.log(updatedDetails);
         const updatedContent = await Content.findOneAndUpdate(
             { storyId },
             { story },
@@ -358,7 +365,25 @@ app.get("/api/story/:storyId", async (req, res) => {
     try{
         console.log("Fetching the story using story details");
         const {storyId} = req.params;
-        const storyContent = await Content.findOne({ storyId });
+
+        let storyContent = globalMoviesCache.find((story) => story.storyId === storyId);
+
+        if (!storyContent){
+            console.log("Inside if");
+            storyContent = await Content.findOne({ storyId });
+        }
+        console.log("Story Content:", storyContent);
+        const updatedDetails = await Details.findOneAndUpdate(
+            { storyId }, // Query by storyId instead of default _id
+            { editing: true } // Update 'editing' fiel // Optionally return the updated document
+        );
+
+        console.log("Updated details in DB:",updatedDetails);
+        console.log("Updating the globalMoviesCache");
+        globalMoviesCache = globalMoviesCache.map((movie) => 
+        movie.storyId === storyId ? {...movie, editing: true}: movie
+        );
+
 
         if(!storyContent){
             return res.status(404).json({message: "story not found"});
@@ -456,9 +481,11 @@ app.post("/api/update-story-rating", async (req,res) => {
 
         await Details.updateOne({storyId},{$set: {rating}});
         globalMoviesCache = globalMoviesCache.map((movie) =>
-            movie.storyId === storyId ? { ...movie, rating: rating } : movie
+            movie.storyId === storyId ? { ...movie._doc, rating: rating } : {...movie._doc}
           );
       
+
+          console.log(globalMoviesCache);
           res.status(200).json({ message: "Average rating updated successfully!", rating });
     } catch (error) {
         console.error("Error updating average rating:", error);
@@ -469,11 +496,11 @@ app.post("/api/update-story-rating", async (req,res) => {
 
 app.get('/stories',  async (req,res) =>{
     const componentOrigin = req.query.origin;
-    console.log(componentOrigin);
+    console.log(globalMoviesCache.map(movie => movie.isPublished)); // Check all `isPublished` values
     let response;
 
     if (componentOrigin === 'ReadStories'){
-        response =await Details.find({ isPublished: true});
+        response =  await Details.find({ isPublished: true });
     } else if(componentOrigin === 'MyStories')
     {
         response = await Details.find({userId : globalUserId});
@@ -495,6 +522,20 @@ app.get("/api/get-story/:storyId", (req, res) => {
     }
 
     res.json(story); // Send the story as JSON response
+});
+
+
+//Unlocking the story not editing
+app.post('/api/unlock-story/:storyId', async (req,res) => {
+    try{
+        const { storyId } = req.params;
+        console.log("Inside unlock-story for storyId: ", storyId);
+        await Details.findOneAndUpdate({storyId: storyId}, {editing : false});
+        res.status(200).json({ message: "Story unlocked successfully." });
+    }catch(error){
+        console.error("Error unlocking story:", error);
+        res.status(500).json({message: "Failed to unlock story. "});
+    }
 });
 
 app.listen(PORT,() => {

@@ -1,10 +1,19 @@
 import "../CSS Folder/main.css";
 import "../CSS Folder/MyStories.css";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { updateStoryDetails } from "./apiUltils.js";
+import { UserContext } from "../context.js";
 
 
 function MyStories(){
+const { setFromComponent,setEditedStoryId,fromComponent, editedStoryId} = useContext(UserContext); // Fetch userId from context
+
+
+    useEffect(() => {
+        updateStoryDetails(fromComponent, editedStoryId, setEditedStoryId, setFromComponent);
+    }, [fromComponent,editedStoryId]);
+
 
     const [selectedCategory, setSelectedCategory] = useState('');
     const [enteredText, setenteredText] = useState('');

@@ -3,12 +3,13 @@ import React, { useEffect, useState, useContext } from 'react';
 import "../CSS Folder/ReadStories.css"
 import { UserContext } from "../context.js";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { updateStoryDetails } from "./apiUltils.js";
 
 function ReadStories(){
     const [stories, setStories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
     const [selectedRating, setSelectedRating] = useState('');
-    const { userId } = useContext(UserContext); // Fetch userId from context
+    const { setFromComponent,setEditedStoryId,fromComponent, editedStoryId,userId } = useContext(UserContext); // Fetch userId from context
     const navigate = useNavigate(); // Define navigate function using useNavigate
     
     console.log(userId);
@@ -25,7 +26,10 @@ function ReadStories(){
         setSelectedRating('');
     };
 
-    
+    useEffect(() => {
+        updateStoryDetails(fromComponent, editedStoryId, setEditedStoryId, setFromComponent);
+    }, [fromComponent, editedStoryId]);
+
     useEffect(() => {
         fetch('http://localhost:5000/stories?origin=ReadStories')
         .then((response) => {
@@ -53,7 +57,6 @@ function ReadStories(){
         navigate("/WriteStory",{ state: storysent});
     }
 
-    console.log(filteredMovies)
 
     return (
         <div>
@@ -92,9 +95,7 @@ function ReadStories(){
                             <div className="placeholder-image"></div> // Add a placeholder div when the image is missing
                         )}
                         <div className="movie-details">
-                            {story.userId === userId &&(
-                                <button className = "edit-button" onClick={() => handleEditClick(story)}> Edit</button>
-                            )}
+                            <button className = "edit-button" onClick={() => handleEditClick(story)} disabled={story.editing}> {story.editing ? "Locked" : "Edit"}</button>
 
                             <span className="title" onClick={() => handleTitleClick(story)} style={{cursor: "pointer", color:"blue"}}>
                                 <strong>Title:</strong> {story.title}

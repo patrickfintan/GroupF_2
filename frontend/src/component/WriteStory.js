@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useLocation} from "react-router-dom";
+import { useLocation, useNavigate} from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../context.js";
 import '../CSS Folder/WriteStory.css';
 
 
 function WriteStory() {
-    const { userId } = useContext(UserContext); // Fetch userId from context
+    const { userId, setEditedStoryId} = useContext(UserContext); // Fetch userId from context
     const [storyType, setStoryType] = useState("");
     const [title, setTitle] = useState("");
     const [summary, setSummary] = useState("");
@@ -16,28 +16,28 @@ function WriteStory() {
     const [newSnapshotText, setNewSnapshotText] = useState("");
     const [newLinks, setNewLinks] = useState("");
     const location = useLocation();
-    const storysent =location.state || {}; // Added for story ID
+    const storysent = location.state|| {};
     const [isPublished, setIsPublished] = useState(false); // Track published state
     const [showPublishButton, setShowPublishButton] = useState(false); // Control visibility of the Publish button
 
-    console.log(storysent);
+    console.log("userid:", userId);
     useEffect(() => {
         const initializeComponent = async () => {
-            if (storysent && storysent.storyId) {
+            if (storysent.storyId) {
                 console.log("Editing existing story:", storysent.storyId);
-                setShowPublishButton(true);
+                setEditedStoryId(storysent.storyId);
                 try {
                     const response = await axios.get(
                         `http://localhost:5000/api/story/${storysent.storyId}`
                     );
                     const data = response.data;
-                    setStoryType(data.storyType);
-                    setTitle(data.title);
-                    setSummary(data.summary);
+                    
+                    setStoryType(storysent.storyType);
+                    setTitle(storysent.title);
+                    setSummary(storysent.summary);
                     setStory(data.story);
-                    setCoverImage(data.coverImage);
-                    setSnapshots(data.snapshots || []);
-                    setIsPublished(data.isPublished || false);
+                    setCoverImage(storysent.coverImage);
+                    setIsPublished(storysent.isPublished || false);
                 } catch (error) {
                     console.error("Error fetching story:", error);
                 }
@@ -48,7 +48,9 @@ function WriteStory() {
         };
     
         initializeComponent();
-    }, [location.key]);
+
+        // Cleanup function to unlock the story when the component unmounts
+    },[storysent.storyId]);
 
     const handleImageUpload = (event) =>{
         setCoverImage(event.target.files[0]);
@@ -65,7 +67,7 @@ function WriteStory() {
         setShowPublishButton(false);
     }; 
   
-
+    const navigate = useNavigate();
     const handleSaveOrPublish = async(publish) => {
         try{
 
@@ -80,21 +82,25 @@ function WriteStory() {
             formData.append("title", title);
             formData.append("summary",summary);
             formData.append("story", story);
-            formData.append("coverImage",coverImage);
             formData.append("isPublished", publish);            
             formData.append("userId", userId);
             formData.append("snapshots", JSON.stringify(snapshots)); // Include snapshots
             console.log(formData);
-            if(storysent){
+            if(storysent.storyId){
                 console.log(storysent);
+                formData.append("coverImage",storysent.coverImage);
                 await axios.post(`http://localhost:5000/api/update-story/${storysent.storyId}`,formData);
                 alert(isPublished ? "Story published successfully!" : "Story updated successfully!");            
             } else{
                 console.log(formData);
+                formData.append("coverImage",coverImage);
                 const response = await axios.post("http://localhost:5000/api/save-story",formData);
-                alert(isPublished ? "Story published successfully!" : "Story updated successfully!");            }
+                alert(!isPublished ? "Story published successfully!" : "Story updated successfully!");           
+             }
                 
                 clearState(); // Clear the state after saving
+                navigate("/MyStories");
+
             }
         catch (error){
             console.error("Error saving story:", error);

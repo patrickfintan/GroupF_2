@@ -1,27 +1,41 @@
 import '../CSS Folder/HomePage.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from "react-router-dom";
-import React, { useState,useEffect } from "react";
+import React, { useState,useEffect, useContext } from "react";
 import axios from 'axios';
+import { UserContext } from "../context.js";
+import { updateStoryDetails } from "./apiUltils.js";
+
 
 function HomePage(){
 
   const[movies, setMovies] = useState([]);
   const navigate = useNavigate();
+  const { setFromComponent,setEditedStoryId,fromComponent, editedStoryId} = useContext(UserContext); // Fetch userId from context
+  
 
-  console.log(movies);
+  console.log(fromComponent);
   useEffect(() => {
     const fetchMovies = async () => {
       try{
-        const response = await axios.get("http://localhost:5000/api/movies");
+
+        const response = await axios.get("http://localhost:5000/api/movies"); //strict mode double rendering
+        console.log(response.data);
         setMovies(response.data);
       }catch (error){
         console.error("Error fetching movies:", error);
       }
     };
 
+    
     fetchMovies();
   }, []);
+
+
+useEffect(() => {
+  updateStoryDetails(fromComponent, editedStoryId, setEditedStoryId, setFromComponent);
+}, [fromComponent, editedStoryId]);
+
 
   const handleReadMore = (movie) =>{
     navigate("/ReadStory", { state: movie});

@@ -168,3 +168,72 @@ p.upload-info {
   padding: 5px 10px;
   font-size: 14px;
 }
+
+.tags-section {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f9f9f9; /* Light background for the tags section */
+  border: 1px solid #ccc; /* Border around the section */
+  border-radius: 5px;
+}
+
+.tags-section h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #333; /* Darker heading color */
+}
+
+.tags-section ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap; /* Make tags wrap if they exceed available space */
+  gap: 10px; /* Space between tags */
+}
+
+.tags-section li {
+  background-color: #007bff; /* Tag background color */
+  color: #fff; /* Text color */
+  padding: 5px 10px;
+  border-radius: 20px; /* Rounded tags */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tags-section li button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  margin-left: 8px;
+  cursor: pointer;
+  font-size: 0.8rem; /* Reduced font size */
+  padding: 2px 5px; /* Reduced padding */
+  border-radius: 4px; /* Adjusted corner radius */
+  height: auto; /* Auto height for compact design */
+}
+
+.tags-section input {
+  margin-top: 10px;
+  width: calc(100% - 20px); /* Adjust for padding */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.tags-section button {
+  margin-top: 10px;
+  padding: 5px 10px; /* Reduced padding for smaller button */
+  background-color: #007bff; /* Button color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.8rem; /* Reduced font size */
+}
+
+.tags-section button:hover {
+  background-color: #0056b3; /* Slightly darker hover effect */
+}
