@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import { useLocation, useNavigate} from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../context.js";
@@ -13,13 +13,17 @@ function WriteStory() {
     const [story, setStory] = useState("");
     const [coverImage, setCoverImage] = useState(null);
     const [snapshots, setSnapshots] = useState([]);
-    const [newSnapshotText, setNewSnapshotText] = useState("");
-    const [newLinks, setNewLinks] = useState("");
+    const [links, setLinks] = useState([]);
+    //const [newSnapshotText, setNewSnapshotText] = useState("");
+    //const [newLinks, setNewLinks] = useState("");
     const location = useLocation();
     const storysent = location.state|| {};
     const [isPublished, setIsPublished] = useState(false); // Track published state
-    const [showPublishButton, setShowPublishButton] = useState(false); // Control visibility of the Publish button
-
+   // const [showPublishButton, setShowPublishButton] = useState(false); // Control visibility of the Publish button
+   const storyBox = useRef(null);
+   const previousStory = useRef("");
+   const [tempLink, setTempLink] = useState('');
+    
     console.log("userid:", userId);
     useEffect(() => {
         const initializeComponent = async () => {
@@ -64,7 +68,7 @@ function WriteStory() {
         setCoverImage(null);
         setSnapshots([]);
         setIsPublished(false);
-        setShowPublishButton(false);
+        //setShowPublishButton(false);
     }; 
   
     const navigate = useNavigate();
@@ -94,7 +98,7 @@ function WriteStory() {
             } else{
                 console.log(formData);
                 formData.append("coverImage",coverImage);
-                const response = await axios.post("http://localhost:5000/api/save-story",formData);
+                //const response = await axios.post("http://localhost:5000/api/save-story",formData);
                 alert(!isPublished ? "Story published successfully!" : "Story updated successfully!");           
              }
                 
@@ -107,18 +111,83 @@ function WriteStory() {
         }
     };
 
+    const increaseSnapshots = (index) => {
+        const updated = snapshots.map(({ start, end }) => ({
+          start: start > index ? start + 1 : start,
+          end: end > index ? end + 1 : end
+        }));
+        setSnapshots(updated);
+      };32
+    
+    const decreaseSnapshots = (index) => {
+        const updated = snapshots.map(({ start, end }) => ({
+          start: start > index ? start - 1 : start,
+          end: end > index ? end - 1 : end
+        }));
+        setSnapshots(updated);
+      };
+
+    const handleStoryChange = (e) => {
+        const newValue = e.target.value;
+        const oldValue = previousStory.current;
+      
+        let changedIndex = -1;
+      
+        // Determine if it was an insertion or deletion
+        if (newValue.length > oldValue.length) {
+          // Character added
+          for (let i = 0; i < newValue.length; i++) {
+            if (newValue[i] !== oldValue[i]) {
+              changedIndex = i;
+              console.log(`Character added at index: ${changedIndex}`);
+
+              increaseSnapshots(changedIndex);
+            
+              break;
+            }
+          }
+        } else if (newValue.length < oldValue.length) {
+          // Character deleted
+          for (let i = 0; i < oldValue.length; i++) {
+            if (newValue[i] !== oldValue[i]) {
+              changedIndex = i;
+              console.log(`Character deleted at index: ${changedIndex}`);
+
+              decreaseSnapshots(changedIndex);
+              break;
+            }
+          }
+
+      
+          // If entire end was deleted
+          if (changedIndex === -1) {
+            changedIndex = newValue.length;
+            console.log(`Character deleted at index: ${changedIndex}`);
+
+            decreaseSnapshots(changedIndex);
+          }
+        }
+
+        setStory(newValue);
+        previousStory.current = newValue;
+      };
+
+    /*
     const handleAddSnapshot = () => {
         const linksArray = newLinks.split(",").map(link => link.trim());
         setSnapshots([...snapshots, { text: newSnapshotText, links: linksArray }]);
         setNewSnapshotText("");
         setNewLinks("");
     };
+    */
 
+    /*
     const handleDeleteSnapshot = (index) => {
         const updatedSnapshots = snapshots.filter((_, i) => i !== index);
         setSnapshots(updatedSnapshots);
     };
-
+    */
+    /*
     const handleDownload = () => {
 
         const fileContent = `
@@ -134,6 +203,22 @@ function WriteStory() {
         document.body.appendChild(element);
         element.click();
     };
+    */
+
+    const getSelectedTextRange = () => {
+        if (storyBox.current) {
+          const textarea = storyBox.current;
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+      
+          console.log(`Selected text starts at ${start} and ends at ${end}`);
+
+          setSnapshots(prev => [...prev, { start, end }]);
+
+          return { start, end };
+        }
+        return { start: null, end: null };
+      };
 
     return (
         <><div>
@@ -172,10 +257,113 @@ function WriteStory() {
             </div>
             <div>
                 <label>Enter Your Story</label>
-                <textarea id="story" value={story} onChange={(e) => setStory(e.target.value)} />
+                <textarea id="story" ref={storyBox} value={story} onChange={(e) => {
+                    setStory(e.target.value);
+                    handleStoryChange(e);
+                }}  />
             </div>
+
+
             <div className="snapshots-section">
-                <h3>Snapshots</h3>
+                <h3>Snapshots HERE</h3>
+                <div>
+                    <button onClick={getSelectedTextRange}>Create Snapshot</button>
+
+                    <table>
+                        <thead>
+                            <tr>
+                            <th>Snap No.</th>
+                            <th>Snapshot</th>
+                            <th>Actions</th>
+                            <th>Link</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {snapshots.map((snapshot, index) => {
+                            const text = storyBox.current?.value || '';
+                            const snap = text.substring(snapshot.start, snapshot.end);
+
+                            const goToCursor = () => {
+                                if (storyBox.current) {
+                                  storyBox.current.focus();
+                                  storyBox.current.setSelectionRange(snapshot.start, snapshot.start);
+                                  storyBox.current.scrollTop = storyBox.current.scrollHeight * (snapshot.start / text.length);
+                                }
+                              };
+
+                            
+
+                            
+
+                              const handleLinkChange = (e) => {
+                                setTempLink(e.target.value);
+                              };
+                        
+                              const addLink = () => {
+                                let url = tempLink;
+                        
+                                
+                                if (url && !/^https?:\/\//i.test(url)) {
+                                  url = 'https://' + url;
+                                }
+                        
+                                
+                                setLinks(prev => {
+                                  const updated = [...prev];
+                                  updated[index] = url;
+                                  return updated;
+                                });
+                        
+                                
+                                setTempLink('');
+                              };
+
+                            const deleteSnapshot = () => {
+                                setSnapshots(prev => {
+                                  const updated = [...prev];
+                                  updated.splice(index, 1);
+                                  return updated;
+                                });
+                                setLinks(prev => {
+                                  const updated = [...prev];
+                                  updated.splice(index, 1);
+                                  return updated;
+                                });
+                            };
+                              
+
+                            return (
+                                <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td><pre>{snap}</pre></td>
+                                <td>
+                                    <button onClick={goToCursor}>Go to</button>
+                                    <button onClick={deleteSnapshot}>Delete Snapshot</button>
+                                </td>
+                                <td>
+                                <input
+                                    type="text"
+                                    value={tempLink}
+                                    onChange={handleLinkChange}
+                                    placeholder="Enter a link"
+                                    />
+                                    <button onClick={addLink} style={{ marginLeft: '8px' }}>Add Link</button>
+                                </td>
+                                <td>
+                                {links[index] && (
+                                    <a href={links[index]} target="_blank" rel="noopener noreferrer">
+                                    {links[index]}
+                                    </a>
+                                )}
+                                </td>
+                                </tr>
+                            );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/*
                 <ul>
                     {snapshots.map((snapshot, index) => (
                         <li key = {index}>
@@ -198,6 +386,7 @@ function WriteStory() {
                     </div>
             </div>
             <div className="button-container">
+            */}
             {storysent.storyId ? (
                     <>
                         {!isPublished ? (
