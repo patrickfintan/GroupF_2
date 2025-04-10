@@ -13,7 +13,7 @@ function WriteStory() {
     const [story, setStory] = useState("");
     const [coverImage, setCoverImage] = useState(null);
     const [snapshots, setSnapshots] = useState([]);
-    const [links, setLinks] = useState([]);
+    //const [links, setLinks] = useState([]);
     //const [newSnapshotText, setNewSnapshotText] = useState("");
     //const [newLinks, setNewLinks] = useState("");
     const location = useLocation();
@@ -22,7 +22,10 @@ function WriteStory() {
    // const [showPublishButton, setShowPublishButton] = useState(false); // Control visibility of the Publish button
    const storyBox = useRef(null);
    const previousStory = useRef("");
-   const [tempLink, setTempLink] = useState('');
+   //const [tempLink, setTempLink] = useState('');
+   const [targetSnap, setTargetSnap] = useState([]);
+   //const [targetSnapshot, setTargetSnapshot] = useState([]);
+   
     
     console.log("userid:", userId);
     useEffect(() => {
@@ -117,7 +120,7 @@ function WriteStory() {
           end: end > index ? end + 1 : end
         }));
         setSnapshots(updated);
-      };32
+      };
     
     const decreaseSnapshots = (index) => {
         const updated = snapshots.map(({ start, end }) => ({
@@ -172,6 +175,9 @@ function WriteStory() {
         previousStory.current = newValue;
       };
 
+     
+
+
     /*
     const handleAddSnapshot = () => {
         const linksArray = newLinks.split(",").map(link => link.trim());
@@ -205,15 +211,32 @@ function WriteStory() {
     };
     */
 
+    const handleDeleteLink = (index) => {
+        setTargetSnap((prevTargetSnap) => prevTargetSnap.filter((_, i) => i !== index));
+      };
+    
+      const handleChangeLink = (index, newString) => {
+        setTargetSnap((prevTargetSnap) => {
+          const updatedSnap = [...prevTargetSnap];
+          updatedSnap[index] = newString;
+          return updatedSnap;
+        });
+      };
+
+      const handleSaveLink = (index) => {
+        console.log("handleSaveLink: " + index);
+      }
+
     const getSelectedTextRange = () => {
         if (storyBox.current) {
           const textarea = storyBox.current;
           const start = textarea.selectionStart;
           const end = textarea.selectionEnd;
+          const links = [];
       
           console.log(`Selected text starts at ${start} and ends at ${end}`);
 
-          setSnapshots(prev => [...prev, { start, end }]);
+          setSnapshots(prev => [...prev, { start, end, links }]);
 
           return { start, end };
         }
@@ -265,7 +288,7 @@ function WriteStory() {
 
 
             <div className="snapshots-section">
-                <h3>Snapshots HERE</h3>
+                <h3>Snapshots</h3>
                 <div>
                     <button onClick={getSelectedTextRange}>Create Snapshot</button>
 
@@ -291,32 +314,6 @@ function WriteStory() {
                                 }
                               };
 
-                            
-
-                            
-
-                              const handleLinkChange = (e) => {
-                                setTempLink(e.target.value);
-                              };
-                        
-                              const addLink = () => {
-                                let url = tempLink;
-                        
-                                
-                                if (url && !/^https?:\/\//i.test(url)) {
-                                  url = 'https://' + url;
-                                }
-                        
-                                
-                                setLinks(prev => {
-                                  const updated = [...prev];
-                                  updated[index] = url;
-                                  return updated;
-                                });
-                        
-                                
-                                setTempLink('');
-                              };
 
                             const deleteSnapshot = () => {
                                 setSnapshots(prev => {
@@ -324,12 +321,47 @@ function WriteStory() {
                                   updated.splice(index, 1);
                                   return updated;
                                 });
+                                {/*
                                 setLinks(prev => {
                                   const updated = [...prev];
                                   updated.splice(index, 1);
                                   return updated;
                                 });
+                                */}
                             };
+
+        
+
+                            const addEmptyLink = (index, callback) => {
+                                setSnapshots((prevSnapshots) => {
+                                  const updatedSnapshots = [...prevSnapshots];
+                                  
+                                  // Ensure that links is always an array
+                                  const links = Array.isArray(updatedSnapshots[index].links)
+                                    ? updatedSnapshots[index].links
+                                    : [];  // If it's not an array, initialize it as an empty array
+                              
+                                  updatedSnapshots[index] = {
+                                    ...updatedSnapshots[index],
+                                    links: [...links, ""],  // Add the empty string to the links array
+                                  };
+                              
+                                  // Callback after the state is updated
+                                  callback();
+                              
+                                  return updatedSnapshots;
+                                });
+                              };
+                              
+                              const handleAddNewLinkClick = (index) => {
+                                console.log("Add new link clicked");
+                              
+                                
+                                addEmptyLink(index, () => {
+                                  
+                                  setTargetSnap(snapshots[index].links);
+                                });
+                              };
                               
 
                             return (
@@ -341,14 +373,10 @@ function WriteStory() {
                                     <button onClick={deleteSnapshot}>Delete Snapshot</button>
                                 </td>
                                 <td>
-                                <input
-                                    type="text"
-                                    value={tempLink}
-                                    onChange={handleLinkChange}
-                                    placeholder="Enter a link"
-                                    />
-                                    <button onClick={addLink} style={{ marginLeft: '8px' }}>Add Link</button>
+                                <button onClick={() => handleAddNewLinkClick(index)}>Add New Link</button>
                                 </td>
+                                
+                                {/*
                                 <td>
                                 {links[index] && (
                                     <a href={links[index]} target="_blank" rel="noopener noreferrer">
@@ -356,6 +384,8 @@ function WriteStory() {
                                     </a>
                                 )}
                                 </td>
+
+                                */}
                                 </tr>
                             );
                             })}
@@ -387,6 +417,73 @@ function WriteStory() {
             </div>
             <div className="button-container">
             */}
+
+
+                <div>
+                    <h3>Strings in targetSnap</h3>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Index</th>
+                            <th>String</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {targetSnap.map((str, index) => (
+                            <tr key={index}>
+                            <td>{index + 1}</td>
+                            <td>
+                                <input
+                                type="text"
+                                value={str}
+                                onChange={(e) => handleChangeLink(index, e.target.value)}
+                                />
+                            </td>
+                            <td>
+                                <button onClick={() => handleSaveLink(index)}>Save</button>
+                            </td>
+                            <td>
+                                <button onClick={() => handleDeleteLink(index)}>Delete</button>
+                            </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                    </div>
+
+            {/*
+            <div className="add-link-selection">
+                <h3>Add Link</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Heading1</th>
+                                <th>Heading2</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {targetSnap.map((targetSnap, index) => {
+                            //const text = storyBox.current?.value || '';
+                            //const targetSnap = text.substring(targetSnapshot.start, targetSnapshot.end);
+                            
+                              
+
+                            return (
+                                <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td><pre>{targetSnap}</pre></td>
+                                </tr>
+                            );
+                            })}
+                        </tbody>
+                    </table>
+            </div>
+
+            */}
+
+
+
+
             {storysent.storyId ? (
                     <>
                         {!isPublished ? (
