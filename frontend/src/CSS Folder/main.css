@@ -1,0 +1,46 @@
+.header {
+    padding-top: 160px; /* Leaves space for navbar */
+    background-image: url('cycle.jpg');
+    background-size: cover;
+    background-position: center;
+    text-align: center;
+    position: relative;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding-top: 70px; /* Adjust padding for smaller devices */
+    }
+}
+
+
+.overlay {
+    position: absolute;
+    min-height: 100%;
+    min-width: 100%;
+    left: 0;
+    top: 0;
+    background: rgba(4, 1, 18, 0);
+    z-index: -1;
+}
+
+.description {
+	position: relative;
+    margin: 0 auto; /* Centers the text horizontally */
+    text-align: center;
+}
+.description h1 {
+    font-size: 2.8rem;
+    color: #fff;
+    margin-bottom: 20px;
+}
+.description p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    font-weight: bold;
+    color: #0f0e0e;
+    margin: 0 auto;
+    max-width: 700px;
+}
+

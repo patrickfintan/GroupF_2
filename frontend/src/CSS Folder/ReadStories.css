@@ -1,0 +1,114 @@
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #eef2f5;
+  margin: 0;
+  padding: 0;
+}
+
+.movie-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 20px auto;
+    max-width: 800px;
+  }
+  
+  .movie-item {
+    display: flex;
+    flex-direction: row-reverse; /* Moves the image to the left end */
+    align-items: center;
+    justify-content: space-between; /* Ensures space between left and right sections */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+
+  .movie-item:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .movie-item img:not([src=""]) {
+    visibility: visible; /* Show the image if src is present */
+}
+  
+  .movie-item img {
+    width: 100px;
+    height: 150px;
+    margin-left: 20px;
+    border-radius: 5px;
+    object-fit: cover;
+    border-radius: 4px;
+    visibility: hidden; /* Hide the image, but keep its space */
+  }
+  
+  .movie-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-right: auto;
+    flex-grow: 1;
+  }
+
+  .placeholder-image {
+    width: 100px;
+    height: 150px;
+    margin-left: 20px;
+    border-radius: 5px;
+    background-color: #ddd;
+}
+  
+  .movie-details span {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 5px;
+  }
+
+  .movie-details .title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #007bff;
+}
+  
+  .published {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .not-published {
+    color: red;
+    font-weight: bold;
+  }
+
+
+.title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #007bff;
+    cursor: pointer;
+}
+
+.rating {
+  font-size: 18px !important;
+  color: #f57c00 !important;
+}
+
+.category {
+  font-size: 14px !important;
+  color: #333 !important;
+}
+
+
+.edit-button {
+  background-color: #28a745 !important;
+  color: #fff !important;
+  border: none !important;
+  padding: 8px 12px !important;
+  border-radius: 5px !important;
+  cursor: pointer !important;
+  transition: background-color 0.3s ease, transform 0.2s ease !important;
+}

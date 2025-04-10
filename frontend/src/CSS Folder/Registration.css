@@ -1,0 +1,89 @@
+/* Global Styles */
+body {
+    background-color: #f8f9fa; /* Light gray background */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Card Styling */
+  .card {
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for elevation */
+  }
+  
+  /* Form Fields */
+  .form-control {
+    font-size: 16px;
+    padding: 10px;
+    border: 1px solid #ced4da; /* Default Bootstrap border color */
+    border-radius: 5px; /* Rounded corners */
+    transition: all 0.3s ease;
+  }
+  
+  .form-control:focus {
+    border-color: #007bff; /* Highlight border color on focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  /* Form Labels */
+  label {
+    font-weight: bold;
+    color: #495057; /* Dark Bootstrap text color */
+  }
+  
+  /* Buttons */
+  .btn {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+  }
+  
+  .btn-primary {
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+  
+  .btn-block {
+    display: block;
+    width: 100%;
+  }
+  
+  /* Error Message */
+  .text-danger {
+    font-size: 14px;
+    margin-top: 5px;
+  }
+  
+  /* Heading */
+  h3 {
+    color: #007bff; /* Primary color */
+    font-weight: bold;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .card {
+      margin: 20px; /* Reduce margins for mobile */
+      padding: 15px;
+    }
+  
+    h3 {
+      font-size: 20px; /* Smaller heading for mobile */
+    }
+  
+    .form-control {
+      font-size: 14px; /* Adjust field size */
+    }
+  
+    .btn {
+      font-size: 14px;
+      padding: 8px 15px; /* Smaller buttons for mobile */
+    }
+  }
+  

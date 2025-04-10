@@ -1,0 +1,850 @@
+*****************************************************************
+1) open terminal + "cd backend"
+2) "npm run dev"
+3) open a 2nd terminal + "cd frontend"
+4) "npm run dev"
+*******************************************************************
+
+
+Samples
+
+POST
+http://localhost:5555/contracts
+
+"date": "2024-11-05",
+"address": "221 Baker Street",
+"lID": "663f5eba12ee0c5969c96a8d",
+"tIDs": ["66405c92050197180b83fdde", "", ""],
+"doorNum": 1,
+"contractLength": "month",
+"propertyType": "semi-detached
+
+//creates a new contract
+
+---
+
+GET
+http://localhost:5555/tenants/66405c92050197180b83fdde
+
+//returns a single tenant by _id
+
+---
+
+GET
+http://localhost:5555/landlords
+
+//returns all landlords
+
+
+---
+
+PUT
+http://localhost:5555/tenants/66405c92050197180b83fdde
+
+"title": "Mr",
+"firstName": "John",
+"surname" : "Joe",
+"mobile" : 353853334444,
+"emailAddress" : "john@joe.ie",
+"addressL1" : "21 the road",
+"addressL2" : "streetway drive",
+"town" : "townsville",
+"county" : "Dublin",
+"eircode" : "D21STR"
+
+//updates tenant by _id
+
+---
+
+DELETE
+http://localhost:5555/tenants/66405c92050197180b83fdde
+
+//deletes tenant by _id
+
+---
+
+DATABASE DUMP:
+
+landlords: {
+{
+_id
+66405f14050197180b83fdf9
+title
+"Ms"
+firstName
+"Lhander"
+surname
+"Lhordz"
+mobile
+"09832432"
+emailAddress
+"landlord@biggo.com"
+addressL1
+"67789 Tower"
+addressL2
+""
+town
+"Oldtown"
+county
+"Dublin"
+eircode
+"D892Old"
+dob
+2019-06-12T00:00:00.000+00:00
+canRent
+true
+canBeContacted
+true
+__v
+0
+_id
+66405f4b050197180b83fdfb
+title
+"Mr"
+firstName
+"Harry"
+surname
+"Houseguy"
+mobile
+"003249324"
+emailAddress
+"houseguy@house.com"
+addressL1
+"House Lane"
+addressL2
+""
+town
+"GreenHouse City"
+county
+"Dublin"
+eircode
+"DGH788"
+dob
+2024-05-22T00:00:00.000+00:00
+canRent
+false
+canBeContacted
+true
+__v
+0
+_id
+664061ab050197180b83fe86
+title
+"Ms"
+firstName
+"Yoda"
+surname
+"Allean"
+mobile
+"09323"
+emailAddress
+"spaceman123@spacemail.marz"
+addressL1
+"Red Desert Hill"
+addressL2
+""
+town
+"Marztown"
+county
+"Meath"
+eircode
+"Mars"
+dob
+1988-06-10T00:00:00.000+00:00
+canRent
+true
+canBeContacted
+true
+__v
+0
+_id
+664061ef050197180b83fe88
+title
+"Mr"
+firstName
+"Luke"
+surname
+"Skywalker"
+mobile
+"0923903"
+emailAddress
+"123Luke@forcemail.come"
+addressL1
+"1029 space hill"
+addressL2
+""
+town
+"Stars Land"
+county
+"Dublin"
+eircode
+"D189STrs"
+dob
+2019-07-12T00:00:00.000+00:00
+canRent
+true
+canBeContacted
+false
+__v
+0
+_id
+6640624d050197180b83fe8b
+title
+"Mr"
+firstName
+"Walk"
+surname
+"Mhanne"
+mobile
+"082389"
+emailAddress
+"walk@man.com"
+addressL1
+"982 Wolker"
+addressL2
+"Yolk Street"
+town
+"Strollio"
+county
+"Dublin"
+eircode
+"D67STR0L"
+dob
+2012-07-12T00:00:00.000+00:00
+canRent
+true
+canBeContacted
+true
+__v
+0
+_id
+664062a1050197180b83fe8d
+title
+"Captian"
+firstName
+"Knee"
+surname
+"Moe"
+mobile
+"08903284"
+emailAddress
+"findingknee@m.oe"
+addressL1
+"Look Street"
+addressL2
+""
+town
+"Whereville"
+county
+"Dublin"
+eircode
+"D3W3R3"
+dob
+2024-04-25T00:00:00.000+00:00
+canRent
+true
+canBeContacted
+true
+__v
+0
+_id
+664062f6050197180b83fe90
+title
+"Miss"
+firstName
+"Lamp"
+surname
+"Shayde"
+mobile
+"099234"
+emailAddress
+"lampshayde@gmail.com"
+addressL1
+"983 Buld Block"
+addressL2
+""
+town
+"Light Town"
+county
+"Dublin"
+eircode
+"D01L1G7"
+dob
+2024-02-29T00:00:00.000+00:00
+canRent
+true
+canBeContacted
+false
+__v
+0
+_id
+66406357050197180b83fe92
+title
+"Mr"
+firstName
+"Long"
+surname
+"Socks"
+mobile
+"09021830"
+emailAddress
+"longestsocks@s.ox"
+addressL1
+"92 Sock Manor"
+addressL2
+""
+town
+"Thread Town"
+county
+"Dublin"
+eircode
+"D18uhsa"
+dob
+1904-02-01T00:00:00.000+00:00
+canRent
+true
+canBeContacted
+true
+__v
+0
+_id
+66406393050197180b83fe94
+title
+"Mr"
+firstName
+"Shilly"
+surname
+"Billy"
+mobile
+"0832940"
+emailAddress
+"shillbill@bmaill.ill"
+addressL1
+"2838 Silly Road"
+addressL2
+""
+town
+"Funnyville"
+county
+"Dublin"
+eircode
+"D72FuN"
+dob
+2024-04-11T00:00:00.000+00:00
+canRent
+true
+canBeContacted
+false
+__v
+0
+_id
+66406577050197180b83ff1c
+title
+"Mx"
+firstName
+"Mouse"
+surname
+"Ratty"
+mobile
+"03284"
+emailAddress
+"cheeselover98@cheesemail.che"
+addressL1
+"Yellow Cheese House"
+addressL2
+""
+town
+"Brie"
+county
+"Dublin"
+eircode
+"D1BRI3"
+dob
+2023-11-02T00:00:00.000+00:00
+canRent
+true
+canBeContacted
+true
+__v
+0
+_id
+664065ba050197180b83ff1e
+title
+"Mr"
+firstName
+"Thoe"
+surname
+"Mato"
+mobile
+"80820384"
+emailAddress
+"tomatoking@hotmail.co.uk"
+addressL1
+"Red Round House"
+addressL2
+""
+town
+"Tomato Town"
+county
+"Dublin"
+eircode
+"D10T0MT0"
+dob
+2024-04-11T00:00:00.000+00:00
+canRent
+true
+canBeContacted
+true
+__v
+0
+}
+
+
+------------
+tenants
+
+{
+_id
+66405c92050197180b83fdde
+title
+"Mr"
+firstName
+"Johnny"
+surname
+"Cash"
+mobile
+"0992812389"
+emailAddress
+"johnny@cash.com"
+addressL1
+"123 road"
+addressL2
+"folsom prison"
+town
+"Nashville"
+county
+"Kildare"
+eircode
+"K9255"
+__v
+0
+_id
+66405cd0050197180b83fde3
+title
+"Cpt"
+firstName
+"Willy"
+surname
+"Wonka"
+mobile
+"932490"
+emailAddress
+"willy@wonka.ie"
+addressL1
+"yellow brick"
+addressL2
+"road"
+town
+"chocolate factory"
+county
+"meath"
+eircode
+""
+__v
+0
+_id
+66405d05050197180b83fde6
+title
+"Miss"
+firstName
+"Jean"
+surname
+"Doe"
+mobile
+"99923"
+emailAddress
+"jjdoe@jmail.ie"
+addressL1
+"West street"
+addressL2
+""
+town
+"Clane"
+county
+"Kildare"
+eircode
+"K23432"
+__v
+0
+_id
+66405d30050197180b83fde8
+title
+"Dr"
+firstName
+"Jim"
+surname
+"Jon"
+mobile
+"0239032"
+emailAddress
+"jonjimslim@wim.jim"
+addressL1
+"House Hill"
+addressL2
+""
+town
+"Tallaght"
+county
+"Dublin"
+eircode
+""
+__v
+0
+_id
+66405d75050197180b83fdeb
+title
+"Ms"
+firstName
+"Win"
+surname
+"Dhow"
+mobile
+"93920"
+emailAddress
+"windhow98@windows.com"
+addressL1
+"Window Bridge"
+addressL2
+""
+town
+"Windowland"
+county
+"Dublin"
+eircode
+"W1nD0W"
+__v
+0
+_id
+66405dd4050197180b83fdee
+title
+"Mr"
+firstName
+"Fred"
+surname
+"Derf"
+mobile
+"098293283"
+emailAddress
+"derffred@freddo.ru"
+addressL1
+"fredman walk"
+addressL2
+""
+town
+"Freddy Town"
+county
+"Louth"
+eircode
+"LFR3D"
+__v
+0
+_id
+66405e29050197180b83fdf1
+title
+"Ms"
+firstName
+"Billy"
+surname
+"Bob"
+mobile
+"90823"
+emailAddress
+"bill@bob.bo"
+addressL1
+"Town Land"
+addressL2
+"Lanewalk"
+town
+"City Centre"
+county
+"Dublin"
+eircode
+"D18IIoP"
+__v
+0
+_id
+66405e4f050197180b83fdf3
+title
+"Dr"
+firstName
+"Kyle"
+surname
+"Lek"
+mobile
+"038204324"
+emailAddress
+"kylelek@lek.ie"
+addressL1
+"456 WalkManor"
+addressL2
+""
+town
+"Roadcity"
+county
+"Dublin"
+eircode
+"D18isdf"
+__v
+0
+_id
+66405e8c050197180b83fdf6
+title
+"Bossman"
+firstName
+"Bhiggs"
+surname
+"Bhozz"
+mobile
+"983432874"
+emailAddress
+"9082913"
+addressL1
+"89"
+addressL2
+"Landfill"
+town
+"Dumpville"
+county
+"Dublin"
+eircode
+"D9vile"
+__v
+0
+_id
+6640660d050197180b83ff22
+title
+"Br"
+firstName
+"Breadman"
+surname
+"Breadder"
+mobile
+"083243"
+emailAddress
+"toastisgoat@toastmail.tot"
+addressL1
+"Baker House 1"
+addressL2
+"The Road"
+town
+"Bread City"
+county
+"Dublin"
+eircode
+"D11902"
+__v
+0
+_id
+664068b6f16a680494dc11e8
+title
+"Mr"
+firstName
+"Dino"
+surname
+"Saur"
+mobile
+"09123"
+emailAddress
+"dinosaur@dino.ent"
+addressL1
+"2 Jurrasic Drive"
+addressL2
+""
+town
+"Jurrasic Park"
+county
+"Dublin"
+eircode
+"D18JURC"
+__v
+0
+}
+
+
+
+----------
+Contracts
+------
+
+{
+
+_id
+66405fbc050197180b83fe19
+date
+2024-05-03T00:00:00.000+00:00
+address
+"House Big Walk, 19 Road Street, Dublin"
+lID
+"66405f14050197180b83fdf9"
+
+tIDs
+Array (3)
+fee
+200
+doorNum
+2
+contractLength
+"6 months &   0 years"
+propertyType
+"Apartment"
+__v
+0
+_id
+664063f9050197180b83feae
+date
+2024-03-13T00:00:00.000+00:00
+address
+"17 Renter House, Rent Town, DR78w"
+lID
+"664061ef050197180b83fe88"
+
+tIDs
+Array (3)
+fee
+999
+doorNum
+99
+contractLength
+"9 months & 98 years"
+propertyType
+"Converted Submarine"
+__v
+0
+_id
+66406426050197180b83febe
+date
+2024-05-01T00:00:00.000+00:00
+address
+"Subwall, Willowhwack, W892Wi"
+lID
+"664062a1050197180b83fe8d"
+
+tIDs
+Array (3)
+fee
+100
+doorNum
+1
+contractLength
+"Permanent"
+propertyType
+"Detached"
+__v
+0
+_id
+6640646f050197180b83fed2
+date
+2024-05-09T00:00:00.000+00:00
+address
+"10 Friday Building, Buildmore Walk, Dublin, D18BLD"
+lID
+"664062f6050197180b83fe90"
+
+tIDs
+Array (3)
+fee
+231
+doorNum
+2
+contractLength
+"3 months & 4 years"
+propertyType
+"Semi-Detached"
+__v
+0
+_id
+664064a3050197180b83fed6
+date
+2024-01-11T00:00:00.000+00:00
+address
+"No 17 Falt, Tower Build, Dublin, D8923"
+lID
+"664061ab050197180b83fe86"
+
+tIDs
+Array (3)
+fee
+34
+doorNum
+1
+contractLength
+"1 months & 1 years"
+propertyType
+"Apartment"
+__v
+0
+_id
+664064d3050197180b83feda
+date
+2024-01-18T00:00:00.000+00:00
+address
+"221B Baker Street, Dublin, D221B"
+lID
+"66406357050197180b83fe92"
+
+tIDs
+Array (3)
+fee
+6754
+doorNum
+5
+contractLength
+"7 months & 7 years"
+propertyType
+"Detached"
+__v
+0
+_id
+66406514050197180b83fefa
+date
+2023-12-08T00:00:00.000+00:00
+address
+"18 Drive, Drivertown, Dublin, D1DRVE"
+lID
+"66406393050197180b83fe94"
+
+tIDs
+Array (3)
+fee
+21321
+doorNum
+2
+contractLength
+"Permanent"
+propertyType
+"Apartment"
+__v
+0
+_id
+6640664a050197180b83ff27
+date
+2024-05-02T00:00:00.000+00:00
+address
+"Cheese Boulivard, DC Cheese, Dublin D1892"
+lID
+"66406577050197180b83ff1c"
+
+tIDs
+Array (3)
+fee
+192
+doorNum
+1
+contractLength
+"Permanent"
+propertyType
+"Apartment"
+__v
+0
+
+}
